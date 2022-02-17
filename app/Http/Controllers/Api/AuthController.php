@@ -93,7 +93,7 @@ class AuthController extends Controller
     /**
      * @OA\Post(
      * path="/api/login",
-     * operationId="register",
+     * operationId="login",
      * tags={"Authentication"},
      * summary="User Login",
      * description="This is used to login loan app users.",

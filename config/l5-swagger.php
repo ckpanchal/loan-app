@@ -5,7 +5,7 @@ return [
     'documentations' => [
         'default' => [
             'api' => [
-                'title' => 'L5 Swagger UI',
+                'title' => 'Loan API',
             ],
 
             'routes' => [
@@ -257,7 +257,7 @@ return [
                  * 'full' (expands the tags and operations),
                  * 'none' (expands nothing).
                  */
-                'doc_expansion' => env('L5_SWAGGER_UI_DOC_EXPANSION', 'none'),
+                'doc_expansion' => env('L5_SWAGGER_UI_DOC_EXPANSION', 'list'),
 
                 /**
                  * If set, enables filtering. The top bar will show an edit box that
@@ -281,7 +281,7 @@ return [
          * Constants which can be used in annotations
          */
         'constants' => [
-            'L5_SWAGGER_CONST_HOST' => env('L5_SWAGGER_CONST_HOST', 'http://my-default-host.com'),
+            'L5_SWAGGER_CONST_HOST' => env('APP_URL', 'http://my-default-host.com'),
         ],
     ],
 ];

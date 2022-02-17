@@ -123,6 +123,12 @@ class LoanApplicationController extends Controller
         $amount = $request->amount_paid;
         $loanRepayment = LoanRepayment::find($id);
         if ($loanRepayment) {
+            if($loanRepayment->loan && $loanRepayment->loan->user_id != $user->id) {
+                return response()->json([
+                    'status' => false,
+                    'message' => __('loan.route_permission_denied'),
+                ], 403);
+            }
             if ($loanRepayment->paid_on == null) {
                 $loanRepayment->amount_paid = $amount;
                 $loanRepayment->paid_on = Carbon::now();
