@@ -9,7 +9,9 @@ use App\Models\User;
 use App\Models\Role;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Resources\User\UserResource;
 use Auth;
+use JWTAuth;
 use Validator;
 
 class AuthController extends Controller
@@ -64,7 +66,7 @@ class AuthController extends Controller
             return response()->json([
                 'status'  => true,
                 'message' => __('auth.user_registered'),
-                'user' => $user
+                'user' => $user ?  new UserResource($user) : NULL
             ], 201);
         } else {
             return response()->json([
@@ -132,8 +134,8 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        auth()->logout();
-
+        $user = JWTAuth::user();
+        JWTAuth::invalidate(JWTAuth::getToken());
         return response()->json([
             'status' => true,
             'message' => __('auth.user_logout')
@@ -158,7 +160,7 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken(auth()->refresh());
+        return $this->respondWithToken(auth('api')->refresh());
     }
 
     /**
@@ -179,7 +181,12 @@ class AuthController extends Controller
      */
     public function profile()
     {
-        return response()->json(auth()->user());
+        $user = JWTAuth::user();
+        $data = $user ?  new UserResource($user) : NULL;
+        return response()->json([
+            'status' => true,
+            'data'   => $data
+        ], 200);
     }
 
     /**

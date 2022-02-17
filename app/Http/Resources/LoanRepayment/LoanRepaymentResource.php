@@ -3,6 +3,7 @@
 namespace App\Http\Resources\LoanRepayment;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Loan\LoanResource;
 
 class LoanRepaymentResource extends JsonResource
 {
@@ -14,6 +15,11 @@ class LoanRepaymentResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id'                => $this->id,
+            'loan'              => $this->loan ? new LoanResource($this->loan) : NULL,
+            'amount_due_date'   => $this->amount_due_date,
+            'paid_on'           => $this->paid_on,
+        ];
     }
 }

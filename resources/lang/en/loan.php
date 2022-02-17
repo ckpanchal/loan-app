@@ -13,5 +13,5 @@ return [
 
     // Loan approve messages
     'loan_approved' => 'Loan approved successfully.',
-    'loan_already_approved' => 'Loan approved successfully.'
+    'loan_already_approved' => 'Loan already approved.'
 ];

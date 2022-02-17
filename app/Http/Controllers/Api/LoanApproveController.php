@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Loan;
 use App\Models\LoanRepayment;
 use App\Services\LoanService;
+use App\Http\Resources\Loan\LoanResource;
 use Carbon\Carbon;
 use JWTAuth;
 
@@ -70,12 +71,6 @@ class LoanApproveController extends Controller
             $loan->approved_by = $user->id;
             $loan->save();
 
-            // Calculate weekly EMI
-            $term = $loan->loan_term*52;
-            $amount = $loan->amount_required;
-            $rate = config('loan.INTEREST_RATE')/(52*100);
-            $emi = $amount * $rate * (pow(1 + $rate, $term) / (pow(1 + $rate, $term) - 1));
-
             // Store loan schedule
             $startDate =  Carbon::now();
             $endDate = Carbon::now();
@@ -93,14 +88,11 @@ class LoanApproveController extends Controller
                     'amount_due_date' => $weekDate->format('Y-m-d'),
                 ]);
             }
-
-            $loan->emi_amount = $emi;
-            $loan->save();
-
+            
             return response()->json([
                 'status' => true,
-                'message' => __('loan.loan_already'),
-                'data' => $loan
+                'message' => __('loan.loan_approved'),
+                'data' => $loan ? new LoanResource($loan) : NULL
             ]);
         } else {
             return response()->json([

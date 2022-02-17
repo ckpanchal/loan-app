@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Loan\ApplyForLoanRequest;
 use App\Http\Requests\Loan\EmiPaymentRequest;
+use App\Http\Resources\Loan\LoanResource;
+use App\Http\Resources\LoanRepayment\LoanRepaymentResource;
 use Carbon\Carbon;
 use JWTAuth;
 
@@ -57,10 +59,19 @@ class LoanApplicationController extends Controller
             'user_id'           => $user->id,
         ]);
         if ($loan) {
+
+            // Calculate weekly EMI
+            $term = $loan->loan_term*52;
+            $amount = $loan->amount_required;
+            $rate = config('loan.INTEREST_RATE')/(52*100);
+            $emi = $amount * $rate * (pow(1 + $rate, $term) / (pow(1 + $rate, $term) - 1));
+            $loan->emi_amount = number_format($emi, 2);
+            $loan->save();
+
             return response()->json([
                 'status' => true,
                 'message' => __('loan.loan_applied'),
-                'data' => $loan
+                'data' => $loan ? new LoanResource($loan) : NULL
             ], 200);
         } else {
             return response()->json([
@@ -113,6 +124,7 @@ class LoanApplicationController extends Controller
                 return response()->json([
                     'status' => true,
                     'message' => __('loan.emi_paid'),
+                    'data' => $loanRepayment ? new LoanRepaymentResource($loanRepayment) : NULL
                 ], 200);
             } else {
                 return response()->json([

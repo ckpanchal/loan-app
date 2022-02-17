@@ -12,4 +12,9 @@ class LoanRepayment extends Model
     protected $table = 'loan_repayments';
 
     protected $guarded = ['id'];
+
+    public function loan()
+    {
+        return $this->belongsTo(Loan::class, 'loan_id', 'id');
+    }
 }
