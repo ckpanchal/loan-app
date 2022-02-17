@@ -1,0 +1,314 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Loan API",
+        "description": "API to interact with Loan Application",
+        "contact": {
+            "name": "Chintan Panchal"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://my-default-host.com",
+            "description": "Dynamic host server"
+        }
+    ],
+    "paths": {
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User Register",
+                "description": "This is used to register loan app users.",
+                "operationId": "register",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Chintan Panchal"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "admin@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "422": {
+                        "description": "Validator Error"
+                    },
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User Login",
+                "description": "This is used to login loan app users.",
+                "operationId": "register",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "admin@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "422": {
+                        "description": "Validator Error"
+                    },
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Logout",
+                "description": "Logout app users",
+                "operationId": "logout",
+                "responses": {
+                    "401": {
+                        "description": "Token Error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/refresh": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Refresh",
+                "description": "This method is used to refresh authentication token",
+                "operationId": "refresh",
+                "responses": {
+                    "401": {
+                        "description": "Token Error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile": {
+            "get": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Refresh",
+                "description": "This method is used to get login user profile",
+                "operationId": "profile",
+                "responses": {
+                    "401": {
+                        "description": "Token Error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/apply-for-loan": {
+            "post": {
+                "tags": [
+                    "Loan"
+                ],
+                "summary": "Apply For Loan",
+                "description": "This api will use for submit loan application request.",
+                "operationId": "applyForLoan",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "amount_required",
+                                    "loan_term"
+                                ],
+                                "properties": {
+                                    "amount_required": {
+                                        "type": "string",
+                                        "example": "50000"
+                                    },
+                                    "loan_term": {
+                                        "description": "In Year",
+                                        "type": "string",
+                                        "example": "2"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "422": {
+                        "description": "Validator Error"
+                    },
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/emi-payment": {
+            "post": {
+                "tags": [
+                    "Loan"
+                ],
+                "summary": "Pay Loan EMI",
+                "description": "This api will use for submit loan emi payment.",
+                "operationId": "emiPayment",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "amount_paid",
+                                    "emi_id"
+                                ],
+                                "properties": {
+                                    "amount_paid": {
+                                        "type": "string",
+                                        "example": "5000"
+                                    },
+                                    "emi_id": {
+                                        "description": "Primary ID from loan repayments table",
+                                        "type": "integer",
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "422": {
+                        "description": "Validator Error"
+                    },
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/approve-loan/{id}": {
+            "get": {
+                "tags": [
+                    "Loan"
+                ],
+                "summary": "Approve Loan Request",
+                "description": "This api will use for approve loan request.",
+                "operationId": "approveLoan",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Loan Id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "description": "Validator Error"
+                    },
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Enter your Bearer Token",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "security": [
+        []
+    ]
+}
