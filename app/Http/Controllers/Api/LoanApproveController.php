@@ -14,8 +14,18 @@ use JWTAuth;
 
 class LoanApproveController extends Controller
 {
+    /**
+     * Loan Service
+     *
+     * @var object
+     */
     protected $loanService;
 
+    /**
+     * Initialize Loan Approve Controller
+     *
+     * @param LoanService $loanService
+     */
     public function __construct(LoanService $loanService) {
         $this->loanService = $loanService;
     }

@@ -4,18 +4,35 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+
 use App\Models\User;
 use App\Models\Role;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Resources\User\UserResource;
+use App\Services\UserService;
 use Auth;
 use JWTAuth;
 use Validator;
 
 class AuthController extends Controller
 {
+    /**
+     * User service object
+     *
+     * @var object
+     */
+    protected $userService;
+
+    /**
+     * Initialize Auth Controller
+     *
+     * @param UserService $userService
+     */
+    public function __construct(UserService $userService) {
+        $this->userService = $userService;
+    }
+
     /**
      * @OA\Post(
      * path="/api/register",
@@ -55,13 +72,10 @@ class AuthController extends Controller
                 'message' => __('auth.not_found')
             ], 400);
         }
-
-        $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'role_id' => $role->id,
-            ]);
+    
+        $requestData = $request->all();
+        $requestData['role_id'] = $role->id;
+        $user = $this->userService->create($requestData);
         if ($user) {
             return response()->json([
                 'status'  => true,

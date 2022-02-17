@@ -10,11 +10,28 @@ use App\Http\Requests\Loan\ApplyForLoanRequest;
 use App\Http\Requests\Loan\EmiPaymentRequest;
 use App\Http\Resources\Loan\LoanResource;
 use App\Http\Resources\LoanRepayment\LoanRepaymentResource;
+use App\Services\LoanService;
 use Carbon\Carbon;
 use JWTAuth;
 
 class LoanApplicationController extends Controller
 {
+    /**
+     * Loan service object
+     *
+     * @var object
+     */
+    protected $loanService;
+
+    /**
+     * Initialize Loan Application Controller
+     *
+     * @param LoanService $loanService
+     */
+    public function __construct(LoanService $loanService) {
+        $this->loanService = $loanService;
+    }
+
     /**
      * @OA\Post(
      * path="/api/apply-for-loan",
@@ -53,21 +70,11 @@ class LoanApplicationController extends Controller
                 'message' => __('loan.route_permission_denied'),
             ], 403);
         }
-        $loan = Loan::create([
-            'amount_required'   => $request->amount_required,
-            'loan_term'         => $request->loan_term,
-            'user_id'           => $user->id,
-        ]);
+        $loan = $this->loanService->create($user, $requestData);
         if ($loan) {
-
-            // Calculate weekly EMI
-            $term = $loan->loan_term*52;
-            $amount = $loan->amount_required;
-            $rate = config('loan.INTEREST_RATE')/(52*100);
-            $emi = $amount * $rate * (pow(1 + $rate, $term) / (pow(1 + $rate, $term) - 1));
+            $emi = $this->loanService->calculateEmi($loan->amount_required, $loan->loan_term, config('loan.INTEREST_RATE'));
             $loan->emi_amount = number_format($emi, 2);
             $loan->save();
-
             return response()->json([
                 'status' => true,
                 'message' => __('loan.loan_applied'),

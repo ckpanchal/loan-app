@@ -2,9 +2,9 @@
 
 namespace App\Repositories;
 
-use App\Models\Loan;
+use App\Models\User;
 
-class LoanRepository
+class UserRepository
 {
     /**
      * Handle logic to get data by id 
@@ -13,17 +13,16 @@ class LoanRepository
      * @return void
      */
     public function findById($id) {
-        return Loan::find($id);
+        return User::find($id);
     }
 
     /**
-     * Handle logic to store loan application data
+     * Handle logic to store user data
      *
-     * @param integer $user
      * @param array $data
      * @return void
      */
-    public function create($user, $data) {
-        return Loan::create($data);
+    public function create($data) {
+        return User::create($data);
     }
 }
